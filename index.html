@@ -51,15 +51,31 @@
     padding-bottom: 10px; 
   }
   
-  /* 広告フッターエリア */
+  /* 広告フッターエリア（高さ自動調整） */
   .ad-footer {
-    height: 60px; /* 広告の高さに合わせて自動調整されますが、最低限確保 */
+    min-height: 60px; height: auto;
+    padding: 15px;
     background: #111;
     border-top: 1px solid #444;
     display: flex; justify-content: center; align-items: center;
     flex-shrink: 0; z-index: 100;
-    font-size: 12px; color: #555;
   }
+  
+  /* Amazonボタンのデザイン */
+  .amazon-btn {
+    display: inline-block;
+    background: #ff9900; /* Amazonカラー */
+    color: #111;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    transition: opacity 0.2s;
+    text-align: center;
+  }
+  .amazon-btn:hover { opacity: 0.8; }
 
   table {
     border-collapse: separate; border-spacing: 0;
@@ -195,19 +211,9 @@
 </div>
 
 <div class="ad-footer">
-  <a href="https://www.amazon.co.jp/%E3%80%90%E7%B4%94%E6%AD%A3%E5%93%81%E3%80%91DualSense-%E3%83%AF%E3%82%A4%E3%83%A4%E3%83%AC%E3%82%B9%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC-%E3%83%9F%E3%83%83%E3%83%89%E3%83%8A%E3%82%A4%E3%83%88-%E3%83%96%E3%83%A9%E3%83%83%E3%82%AF-CFI-ZCT2J01/dp/B0FX53RQ1B?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=28EFNCIOCW8CH&dib=eyJ2IjoiMSJ9.esPIdOI9wHzOqp8Ac5luB__tQ5JT9kTPOA6xnIcOZuBSgZWluRoRoYLQk4qJCVHqJDNNF6B6qwd7aLr-eOE0C8eLTHwAZR4dGQFaPdp97xywrDNlgNeUYDhpLDZDB5XiRV7nZLfUg33AccJwAlOrhIUuIYu3DHOjokjSI6P6TbwQ13n__aUDshtpDxo1rydT9mjalOSQ9mhcGRx92G3RH9jsCs1mlD7ezw18JFPHE3hVzvV8A2w90ANMhZf5TAPnE92JfCX8S2AKxDz64NSpApeRtqHugdeTQu1MNjFbxHo.fYrUW_xDiwAl325NBJiVV1UkLMMNI45l8N2gHjuIeiw&dib_tag=se&keywords=%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC&qid=1766182208&s=gift-cards&sprefix=%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC%2Cgift-cards%2C149&sr=1-6&linkCode=ll1&tag=mhwilds001-22&linkId=d976069cd6808e4e8b5f95d8c921daa6&language=ja_JP&ref_=as_li_ss_tl" target="_blank" style="
-    display: inline-block;
-    background: #ff9900; /* Amazonオレンジ色 */
-    color: #111;
-    font-weight: bold;
-    text-decoration: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    transition: opacity 0.2s;
-  ">
-    AmazonでDualSenseを見る 
+  <a href="https://www.amazon.co.jp/%E3%80%90%E7%B4%94%E6%AD%A3%E5%93%81%E3%80%91DualSense-%E3%83%AF%E3%82%A4%E3%83%A4%E3%83%AC%E3%82%B9%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC-%E3%83%9F%E3%83%83%E3%83%89%E3%83%8A%E3%82%A4%E3%83%88-%E3%83%96%E3%83%A9%E3%83%83%E3%82%AF-CFI-ZCT2J01/dp/B0FX53RQ1B?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=28EFNCIOCW8CH&dib=eyJ2IjoiMSJ9.esPIdOI9wHzOqp8Ac5luB__tQ5JT9kTPOA6xnIcOZuBSgZWluRoRoYLQk4qJCVHqJDNNF6B6qwd7aLr-eOE0C8eLTHwAZR4dGQFaPdp97xywrDNlgNeUYDhpLDZDB5XiRV7nZLfUg33AccJwAlOrhIUuIYu3DHOjokjSI6P6TbwQ13n__aUDshtpDxo1rydT9mjalOSQ9mhcGRx92G3RH9jsCs1mlD7ezw18JFPHE3hVzvV8A2w90ANMhZf5TAPnE92JfCX8S2AKxDz64NSpApeRtqHugdeTQu1MNjFbxHo.fYrUW_xDiwAl325NBJiVV1UkLMMNI45l8N2gHjuIeiw&dib_tag=se&keywords=%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC&qid=1766182208&s=gift-cards&sprefix=%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC%2Cgift-cards%2C149&sr=1-6&linkCode=ll1&tag=mhwilds001-22&linkId=d976069cd6808e4e8b5f95d8c921daa6&language=ja_JP&ref_=as_li_ss_tl" 
+     target="_blank" class="amazon-btn">
+     AmazonでDualSenseを見る
   </a>
 </div>
 
@@ -509,4 +515,3 @@
 </script>
 </body>
 </html>
-
