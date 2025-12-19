@@ -45,16 +45,15 @@
   .btn-reset { background: #dc3545; }
   .btn-help { background: #6f42c1; }
 
-  /* テーブルエリア (広告の分だけ高さを調整) */
+  /* テーブルエリア */
   .table-container {
     flex: 1; overflow: auto; position: relative;
-    /* 広告フッターの上にスペースを作る */
     padding-bottom: 10px; 
   }
   
-  /* ★広告エリア（画面下に固定） */
+  /* 広告フッターエリア */
   .ad-footer {
-    height: 60px; /* 広告の高さに合わせて調整 */
+    height: 60px; /* 広告の高さに合わせて自動調整されますが、最低限確保 */
     background: #111;
     border-top: 1px solid #444;
     display: flex; justify-content: center; align-items: center;
@@ -73,7 +72,6 @@
     padding: 2px; text-align: center; vertical-align: middle;
   }
 
-  /* ヘッダー固定 */
   thead th {
     position: sticky; top: 0;
     background: #2a2a2a; color: #ccc; z-index: 10;
@@ -106,9 +104,7 @@
 
   .col-attr { width: 140px; min-width: 140px; background: #252525; }
   
-  /* thはrelativeにしない */
   th.col-attr { }
-  /* tdはrelativeにする(チェックボックス用) */
   td.col-attr { position: relative; }
   
   select {
@@ -238,13 +234,15 @@
         <li><strong>抽出表示：</strong> 入力されたデータと、完了マーク（□）がついている箇所を一覧で表示します。</li>
         <li><strong>保存について：</strong> 「保存」ボタンを押すと、お使いのブラウザにデータが保存されます。ページを閉じてもデータは消えません。</li>
       </ul>
-      <div class="help-section" style="border:none; margin-top:20px; padding-top:10px; border-top:1px solid #444;">
-        <div class="help-title" style="font-size:12px; color:#aaa;">免責事項・規約</div>
-        <p style="font-size:10px; color:#777; line-height:1.4;">
-          当サイトは、Amazon.co.jpを宣伝しリンクすることによってサイトが紹介料を獲得できる手段を提供することを目的に設定されたアフィリエイトプログラムである、Amazonアソシエイト・プログラムの参加者です。
-        </p>
-      </div>
     </div>
+    
+    <div class="help-section" style="border:none; margin-top:20px; padding-top:10px; border-top:1px solid #444;">
+      <div class="help-title" style="font-size:12px; color:#aaa;">免責事項・規約</div>
+      <p style="font-size:10px; color:#777; line-height:1.4;">
+        当サイトは、Amazon.co.jpを宣伝しリンクすることによってサイトが紹介料を獲得できる手段を提供することを目的に設定されたアフィリエイトプログラムである、Amazonアソシエイト・プログラムの参加者です。
+      </p>
+    </div>
+
   </div>
 </div>
 
@@ -498,5 +496,3 @@
 </script>
 </body>
 </html>
-
-
