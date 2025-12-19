@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  // ★ここも自分の測定IDに変えてください
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="MHWilds（モンハンワイルズ）対応予定、巨戟龍の黙示録などアーティア装備・覚醒武器の厳選を効率化する管理ツール。テーブル管理、完了チェック機能付き。">
+<title>MHWilds巨戟アーティア厳選管理表</title>
+<style>
+  /* --- デザイン設定 --- */
+  body {
+    background-color: #202020;
+    color: #e0e0e0;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    margin: 0; padding: 0;
+    height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  
+  /* 操作パネル */
+  .control-bar {
+    padding: 10px 20px; background: #333; border-bottom: 1px solid #555;
+    display: flex; gap: 10px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    z-index: 100; flex-wrap: wrap; flex-shrink: 0;
+  }
+  h1 { margin: 0; font-size: 16px; color: #4db8ff; margin-right: 10px;}
+  
+  button {
+    padding: 6px 12px; cursor: pointer; border-radius: 4px; border: none; font-weight: bold; color: white; font-size: 12px;
+    transition: opacity 0.2s;
+  }
+  button:hover { opacity: 0.8; }
+  .btn-save { background: #28a745; }
+  .btn-extract { background: #007bff; }
+  .btn-shift { background: #ff9800; color: #222; }
+  .btn-reset { background: #dc3545; }
+  .btn-help { background: #6f42c1; }
+
+  /* テーブルエリア (広告の分だけ高さを調整) */
+  .table-container {
+    flex: 1; overflow: auto; position: relative;
+    /* 広告フッターの上にスペースを作る */
+    padding-bottom: 10px; 
+  }
+  
+  /* ★広告エリア（画面下に固定） */
+  .ad-footer {
+    height: 60px; /* 広告の高さに合わせて調整 */
+    background: #111;
+    border-top: 1px solid #444;
+    display: flex; justify-content: center; align-items: center;
+    flex-shrink: 0; z-index: 100;
+    font-size: 12px; color: #555;
+  }
+
+  table {
+    border-collapse: separate; border-spacing: 0;
+    white-space: nowrap; font-size: 12px;
+  }
+  
+  th, td {
+    border-right: 1px solid #444; 
+    border-bottom: 4px solid #555;
+    padding: 2px; text-align: center; vertical-align: middle;
+  }
+
+  /* ヘッダー固定 */
+  thead th {
+    position: sticky; top: 0;
+    background: #2a2a2a; color: #ccc; z-index: 10;
+    height: 30px; 
+    border-bottom: 4px solid #777; 
+    cursor: pointer;
+  }
+
+  .col-no {
+    position: sticky; left: 0;
+    background: #2a2a2a; z-index: 20;
+    width: 30px; font-weight: bold; color: #888;
+    border-right: 2px solid #666; 
+  }
+  thead th.col-no { z-index: 30; cursor: default; }
+
+  tr.active-row td { background-color: #383838 !important; }
+  tr.active-row td.col-no,
+  tr.active-row td.col-weapon-label {
+    color: #ffd700 !important; 
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); 
+    border-right: 2px solid #ffd700;
+  }
+
+  .col-weapon-label {
+    background-color: #3a3a3a; font-weight: bold; color: #fff; width: 40px;
+  }
+  .toggle-icon::after { content: " [-]"; color: #4db8ff; font-size: 10px;}
+  .collapsed.toggle-icon::after { content: " [+]"; color: #ff6b6b;}
+
+  .col-attr { width: 140px; min-width: 140px; background: #252525; }
+  
+  /* thはrelativeにしない */
+  th.col-attr { }
+  /* tdはrelativeにする(チェックボックス用) */
+  td.col-attr { position: relative; }
+  
+  select {
+    display: block; width: 88%; 
+    background: transparent; color: #ccc; border: none; 
+    font-size: 11px; height: 18px; cursor: pointer;
+    margin-bottom: 2px;
+  }
+  select:focus { background: #000; color: #fff; outline: none; }
+  option { background: #333; }
+
+  .sel-series { color: #4db8ff; border-bottom: 1px solid #004455; }
+  .sel-group { color: #ffeb3b; border-top: 1px solid #554400; }
+
+  .right-check-box {
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px;
+    border: 1px solid #666; background: #333;
+    cursor: pointer; z-index: 5; border-radius: 2px;
+  }
+  .right-check-box:hover { border-color: #aaa; }
+  
+  .cell-done { background-color: #00331a !important; }
+  .cell-done .right-check-box { background-color: #00ff00; border-color: #00ff00; }
+  .cell-done .right-check-box::after {
+    content: ""; display: block; 
+    width: 4px; height: 8px; 
+    border-bottom: 2px solid #000; border-right: 2px solid #000;
+    transform: rotate(45deg); 
+    position: absolute; top: 1px; left: 4px;
+  }
+
+  .hidden-col { display: none; }
+
+  /* モーダル */
+  .modal-overlay {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 80%; max-height: 85%; background: #222; border: 2px solid #555; z-index: 200;
+    box-shadow: 0 0 30px rgba(0,0,0,0.9); flex-direction: column;
+  }
+  .modal-header {
+    padding: 10px; background: #333; border-bottom: 1px solid #555;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-body {
+    padding: 20px; overflow: auto; flex: 1; background: #1a1a1a;
+    font-family: monospace; font-size: 14px; line-height: 1.6; color: #ddd;
+  }
+  .close-btn { 
+    cursor: pointer; color: #fff; background: #d00; 
+    padding: 5px 15px; border-radius: 4px; font-weight: bold; border: none;
+  }
+  
+  .res-row-group { margin-bottom: 15px; padding: 10px; border-radius: 5px; border: 1px solid #444; }
+  .group-color-1 { background: rgba(0, 255, 0, 0.05); border-left: 5px solid #81ff81; } 
+  .group-color-2 { background: rgba(255, 0, 0, 0.05); border-left: 5px solid #ff8181; }
+  .res-item { margin-left: 15px; border-bottom: 1px dashed #333; padding: 2px 0;}
+  .done-badge {
+    color: #00ff00; font-weight: bold; margin-left: 10px; font-size: 13px;
+    background: rgba(0,50,0,0.5); padding: 2px 5px; border-radius: 3px;
+  }
+  .help-section { margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 15px; }
+  .help-title { color: #ffd700; font-weight: bold; margin-bottom: 5px; font-size: 15px; }
+
+</style>
+</head>
+<body>
+
+<div class="control-bar">
+  <h1>MHWilds巨戟アーティア厳選管理表</h1>
+  <button class="btn-help" onclick="showHelp()">使い方</button>
+  <button class="btn-save" onclick="manualSave()">保存</button>
+  <button class="btn-extract" onclick="extractData()">抽出表示</button>
+  <button class="btn-shift" onclick="shiftTable()">テーブル更新（行を詰める）</button>
+  <button class="btn-reset" onclick="resetAll()">全リセット</button>
+</div>
+
+<div class="table-container">
+  <table id="main-table">
+    <thead>
+      <tr id="header-row">
+        <th class="col-no">No.</th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+      </tbody>
+  </table>
+</div>
+
+<div class="ad-footer">
+  <span style="opacity:0.5;">ここに広告が表示されます</span>
+</div>
+
+<div id="result-modal" class="modal-overlay">
+  <div class="modal-header">
+    <h3 style="color:#4db8ff; margin:0;">抽出結果</h3>
+    <button class="close-btn" onclick="document.getElementById('result-modal').style.display='none'">閉じる</button>
+  </div>
+  <div id="result-content" class="modal-body"></div>
+</div>
+
+<div id="help-modal" class="modal-overlay">
+  <div class="modal-header">
+    <h3 style="color:#ffd700; margin:0;">使い方ガイド</h3>
+    <button class="close-btn" onclick="document.getElementById('help-modal').style.display='none'">閉じる</button>
+  </div>
+  <div class="modal-body">
+    <div class="help-section">
+      <div class="help-title">完了マーク（「ここまで厳選した」の目印）</div>
+      マスの**右端にある「□」**をクリックすると、緑色のチェックが付きます。抽出にも表示されるので「この武器のこの属性は、ここまで確認済み！」という目印として使ってください。
+    </div>
+    <div class="help-section">
+      <div class="help-title">列の開閉</div>
+      最上部の**武器名（例：大剣）**をクリックすると、その武器の列を折りたたむ/開くことができます。開閉しても入力の内容は失われないため、画面をスッキリさせたい時に使ってください。
+    </div>
+    <div class="help-section">
+      <div class="help-title">テーブル更新（行の繰り上げ）</div>
+      厳選が進んで行が足りなくなったり、テーブルを更新したい時に使います。<br>
+      1. 上部の**「テーブル更新」**ボタンを押します。<br>
+      2. 「何番目まで作成したか（消したいか）」を数字で入力します。<br>
+      <span style="color:#aaa;">例：「10」と入力 ⇒ 1～10行目が削除され、11行目のデータがNo.1に繰り上がります。<br>
+      ※チェックマークやプルダウンの内容も一緒に移動します。</span>
+    </div>
+    <div class="help-section" style="border:none;">
+      <div class="help-title">その他の機能</div>
+      <ul>
+        <li><strong>抽出表示：</strong> 入力されたデータと、完了マーク（□）がついている箇所を一覧で表示します。</li>
+        <li><strong>保存について：</strong> 「保存」ボタンを押すと、お使いのブラウザにデータが保存されます。ページを閉じてもデータは消えません。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- 設定データ ---
+  const ROW_COUNT = 100;
+  const WEAPONS = ["大剣", "太刀", "片手", "双剣", "ハンマー", "笛", "ランス", "ガンス", "スラアク", "チャアク", "虫棍", "ライト", "ヘビィ", "弓"];
+  const ATTRIBUTES = ["火", "水", "雷", "氷", "龍"];
+
+  const SERIES_SKILLS = [
+    "巨戟龍の黙示録", "オメガレゾナンス", "暗黒騎士の証", "黒蝕竜の力", "海竜の渦雷",
+    "兇爪竜の力", "千刃竜の闘志", "泡狐竜の力", "雷顎竜の闘志", "白熾龍の脈動",
+    "煌雷竜の力", "凍峰竜の反逆", "獄焔蛸の反逆", "波衣竜の守護", "闢獣の力", "火竜の力",
+    "護鎖刃竜の命脈", "鎖刃竜の飢餓", "雪獅子の闘志", "鎧竜の守護", "暗器蛸の力"
+  ];
+
+  const GROUP_SKILLS = [
+    "ヌシの魂", "ヌシの憤激", "ヌシの誇り", "鱗張りの技法", "革細工の柔性", 
+    "毛皮の昂揚", "甲虫の知らせ", "護竜の脈動", "甲虫の擬態", "革細工の滑性", 
+    "鱗重ねの工夫", "毛皮の誘惑", "護竜の守り", "先達の導き", 
+    "栄光の誉れ", "祝祭の巡り"
+  ];
+
+  // --- HTML生成準備 ---
+  let seriesOptions = `<option value="">-</option>`;
+  SERIES_SKILLS.forEach(s => seriesOptions += `<option value="${s}">${s}</option>`);
+  let groupOptions = `<option value="">-</option>`;
+  GROUP_SKILLS.forEach(s => groupOptions += `<option value="${s}">${s}</option>`);
+
+  // --- 初期化処理 ---
+  const tableHead = document.getElementById('header-row');
+  const tableBody = document.getElementById('table-body');
+  
+  WEAPONS.forEach((wp, wIdx) => {
+    const thWp = document.createElement('th');
+    thWp.className = `col-weapon-label toggle-icon collapsed`;
+    thWp.innerText = wp;
+    thWp.onclick = () => toggleGroup(wIdx);
+    tableHead.appendChild(thWp);
+
+    ATTRIBUTES.forEach((attr) => {
+      const thAttr = document.createElement('th');
+      thAttr.innerText = attr;
+      thAttr.className = `col-attr group-${wIdx} hidden-col`;
+      tableHead.appendChild(thAttr);
+    });
+  });
+
+  for (let r = 1; r <= ROW_COUNT; r++) {
+    const tr = document.createElement('tr');
+    tr.id = `row-${r}`;
+    
+    const tdNo = document.createElement('td');
+    tdNo.className = 'col-no';
+    tdNo.innerText = r;
+    tr.appendChild(tdNo);
+
+    WEAPONS.forEach((wp, wIdx) => {
+      const tdWp = document.createElement('td');
+      tdWp.className = 'col-weapon-label';
+      tdWp.innerText = r;
+      tr.appendChild(tdWp);
+
+      ATTRIBUTES.forEach((attr, aIdx) => {
+        const tdAttr = document.createElement('td');
+        const cellId = `cell_r${r}_w${wIdx}_a${aIdx}`;
+        tdAttr.id = cellId;
+        tdAttr.className = `col-attr group-${wIdx} hidden-col`;
+        
+        const baseId = `r${r}_w${wIdx}_a${aIdx}`;
+        const focusEvent = `onfocus="highlightRow(${r})"`;
+
+        const checkBox = `<div class="right-check-box" onclick="toggleAttrCheck('${cellId}')" title="完了マーク"></div>`;
+        const selS = `<select id="${baseId}_s" class="sel-series" title="シリーズ" ${focusEvent}>${seriesOptions}</select>`;
+        const selG = `<select id="${baseId}_g" class="sel-group" title="グループ" ${focusEvent}>${groupOptions}</select>`;
+        
+        tdAttr.innerHTML = selS + selG + checkBox;
+        tr.appendChild(tdAttr);
+      });
+    });
+    tableBody.appendChild(tr);
+  }
+
+  // --- 機能実装 ---
+  function showHelp() { document.getElementById('help-modal').style.display = 'flex'; }
+
+  let currentRow = 0;
+  function highlightRow(r) {
+    if(currentRow > 0) document.getElementById(`row-${currentRow}`).classList.remove('active-row');
+    const tr = document.getElementById(`row-${r}`);
+    if(tr) { tr.classList.add('active-row'); currentRow = r; }
+  }
+
+  function toggleAttrCheck(cellId) {
+    const el = document.getElementById(cellId);
+    if(!el) return;
+    const isChecking = !el.classList.contains('cell-done');
+    el.classList.toggle('cell-done');
+    if(isChecking) {
+      const parts = cellId.split('_'); 
+      const rCurrent = parseInt(parts[1].substring(1));
+      const wPart = parts[2];
+      const aPart = parts[3];
+      for(let r = 1; r <= ROW_COUNT; r++) {
+        if(r === rCurrent) continue; 
+        const otherId = `cell_r${r}_${wPart}_${aPart}`;
+        const otherEl = document.getElementById(otherId);
+        if(otherEl && otherEl.classList.contains('cell-done')) {
+          otherEl.classList.remove('cell-done');
+        }
+      }
+    }
+  }
+
+  function toggleGroup(wIdx) {
+    document.querySelectorAll(`th.group-${wIdx}`).forEach(el => el.classList.toggle('hidden-col'));
+    document.querySelectorAll(`td.group-${wIdx}`).forEach(el => el.classList.toggle('hidden-col'));
+    const targetHeader = tableHead.children[1 + (wIdx * (ATTRIBUTES.length + 1))];
+    if(targetHeader) targetHeader.classList.toggle('collapsed');
+  }
+
+  function manualSave() {
+    localStorage.setItem('mhwilds_artian_manage', JSON.stringify(getAllData()));
+    alert("保存しました！");
+  }
+
+  function getAllData() {
+    const data = {};
+    document.querySelectorAll('select').forEach(sel => {
+      if(sel.value !== "") data[sel.id] = sel.value;
+    });
+    document.querySelectorAll('.cell-done').forEach(cell => {
+      data["check_" + cell.id] = "checked";
+    });
+    return data;
+  }
+
+  window.onload = function() {
+    const data = JSON.parse(localStorage.getItem('mhwilds_artian_manage'));
+    if(data) applyDataToView(data);
+  };
+
+  function applyDataToView(data) {
+    document.querySelectorAll('select').forEach(s => s.value = "");
+    document.querySelectorAll('.cell-done').forEach(c => c.classList.remove('cell-done'));
+    for (const [key, value] of Object.entries(data)) {
+      if(key.startsWith('check_')) {
+        const cellId = key.replace("check_", "");
+        const el = document.getElementById(cellId);
+        if(el && value === "checked") el.classList.add('cell-done');
+      } else {
+        const el = document.getElementById(key);
+        if(el) el.value = value;
+      }
+    }
+  }
+
+  function shiftTable() {
+    const msg = "何番目までの武器を作成しましたか？（例:10番目までの武器を作成したなら「10」と入力→1～10番目までのテーブルは削除され、11番目以降が1番目に繰り上がります";
+    const input = prompt(msg);
+    if (!input) return;
+    const shiftAmount = parseInt(input);
+    if (isNaN(shiftAmount) || shiftAmount < 1) { alert("正しい数字を入力してください"); return; }
+    if (!confirm(`${shiftAmount}番目までを削除して繰り上げます。よろしいですか？`)) return;
+
+    const currentData = getAllData();
+    const newData = {};
+    const regex = /^(.*)r(\d+)_w(\d+)_a(\d+)(.*)$/;
+
+    for (const [key, value] of Object.entries(currentData)) {
+      const match = key.match(regex);
+      if (match) {
+        const rowNum = parseInt(match[2]);
+        if (rowNum > shiftAmount) {
+          const newRowNum = rowNum - shiftAmount;
+          const newKey = `${match[1]}r${newRowNum}_w${match[3]}_a${match[4]}${match[5]}`;
+          newData[newKey] = value;
+        }
+      }
+    }
+    localStorage.setItem('mhwilds_artian_manage', JSON.stringify(newData));
+    applyDataToView(newData);
+    if(currentRow > 0) document.getElementById(`row-${currentRow}`).classList.remove('active-row');
+    currentRow = 0;
+    alert("更新完了！");
+  }
+
+  function extractData() {
+    let finalHTML = "";
+    let totalHits = 0;
+    let displayedRowCount = 0;
+
+    for (let r = 1; r <= ROW_COUNT; r++) {
+      let rowHTML = "";
+      let rowHits = 0;
+
+      for (let w = 0; w < WEAPONS.length; w++) {
+        for (let a = 0; a < ATTRIBUTES.length; a++) {
+          const sVal = document.getElementById(`r${r}_w${w}_a${a}_s`).value;
+          const gVal = document.getElementById(`r${r}_w${w}_a${a}_g`).value;
+          
+          const cellId = `cell_r${r}_w${w}_a${a}`;
+          const isDone = document.getElementById(cellId).classList.contains('cell-done');
+
+          if (sVal !== "" || gVal !== "" || isDone) {
+            let content = "";
+            if(sVal || gVal) {
+                content = (sVal && gVal) ? `【シ】${sVal} / 【グ】${gVal}` : (sVal ? `【シ】${sVal}` : `【グ】${gVal}`);
+            } else {
+                content = "（スキル記録なし）";
+            }
+
+            if (isDone) {
+                content += ` <span class="done-badge">${WEAPONS[w]}・${ATTRIBUTES[a]}はここまでの入力</span>`;
+            }
+
+            rowHTML += `<div class="res-item">[${WEAPONS[w]}・${ATTRIBUTES[a]}] : ${content}</div>`;
+            rowHits++;
+            totalHits++;
+          }
+        }
+      }
+
+      if (rowHits > 0) {
+        const colorClass = (displayedRowCount % 2 === 0) ? "group-color-1" : "group-color-2";
+        finalHTML += `<div class="res-row-group ${colorClass}">
+          <strong>【No.${r}】</strong>
+          ${rowHTML}
+        </div>`;
+        displayedRowCount++;
+      }
+    }
+    
+    const resultDiv = document.getElementById('result-content');
+    if(finalHTML === "") {
+      resultDiv.innerHTML = "<p>データがありません。</p>";
+    } else {
+      resultDiv.innerHTML = `<p>計 ${totalHits} 件抽出しました</p>` + finalHTML;
+    }
+    document.getElementById('result-modal').style.display = 'flex';
+  }
+
+  function resetAll() {
+    if(!confirm("【警告】\nすべての入力データ（チェックマーク含む）を消去します。\n本当にリセットしますか？")) return;
+    document.querySelectorAll('select').forEach(s => s.value = "");
+    document.querySelectorAll('.cell-done').forEach(c => c.classList.remove('cell-done'));
+    localStorage.removeItem('mhwilds_artian_manage');
+    if(currentRow > 0) document.getElementById(`row-${currentRow}`).classList.remove('active-row');
+  }
+
+</script>
+</body>
+</html>
