@@ -16,7 +16,7 @@
 <meta name="description" content="MHWilds（モンハンワイルズ）対応予定、巨戟龍の黙示録などアーティア装備・覚醒武器の厳選を効率化する管理ツール。テーブル管理、完了チェック機能付き。">
 <title>MHWilds巨戟アーティア厳選管理表</title>
 <style>
-  /* --- デザイン設定 --- */
+  /*デザ*/
   body {
     background-color: #202020;
     color: #e0e0e0;
@@ -25,7 +25,7 @@
     height: 100vh;
     display: flex; flex-direction: column;
   }
-  
+   
   /* 操作パネル */
   .control-bar {
     padding: 10px 20px; background: #333; border-bottom: 1px solid #555;
@@ -33,7 +33,7 @@
     z-index: 100; flex-wrap: wrap; flex-shrink: 0;
   }
   h1 { margin: 0; font-size: 16px; color: #4db8ff; margin-right: 10px;}
-  
+   
   button {
     padding: 6px 12px; cursor: pointer; border-radius: 4px; border: none; font-weight: bold; color: white; font-size: 12px;
     transition: opacity 0.2s;
@@ -50,8 +50,8 @@
     flex: 1; overflow: auto; position: relative;
     padding-bottom: 10px; 
   }
-  
-  /* 広告フッターエリア（スリム版） */
+   
+  /* 広告フッターエリア */
   .ad-footer {
     min-height: 40px; height: auto;
     padding: 5px;
@@ -60,8 +60,8 @@
     display: flex; justify-content: center; align-items: center;
     flex-shrink: 0; z-index: 100;
   }
-  
-  /* Amazonボタンのデザイン（スリム版） */
+   
+  /* Amaボデザ */
   .amazon-btn {
     display: inline-block;
     background: #ff9900; /* Amazonカラー */
@@ -70,7 +70,7 @@
     text-decoration: none;
     padding: 6px 15px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 12px;    /* 文字サイズを小さく */
     box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     transition: opacity 0.2s;
     text-align: center;
@@ -81,7 +81,7 @@
     border-collapse: separate; border-spacing: 0;
     white-space: nowrap; font-size: 12px;
   }
-  
+   
   th, td {
     border-right: 1px solid #444; 
     border-bottom: 4px solid #555;
@@ -119,10 +119,10 @@
   .collapsed.toggle-icon::after { content: " [+]"; color: #ff6b6b;}
 
   .col-attr { width: 140px; min-width: 140px; background: #252525; }
-  
+   
   th.col-attr { }
   td.col-attr { position: relative; }
-  
+   
   select {
     display: block; width: 88%; 
     background: transparent; color: #ccc; border: none; 
@@ -142,7 +142,7 @@
     cursor: pointer; z-index: 5; border-radius: 2px;
   }
   .right-check-box:hover { border-color: #aaa; }
-  
+   
   .cell-done { background-color: #00331a !important; }
   .cell-done .right-check-box { background-color: #00ff00; border-color: #00ff00; }
   .cell-done .right-check-box::after {
@@ -173,7 +173,7 @@
     cursor: pointer; color: #fff; background: #d00; 
     padding: 5px 15px; border-radius: 4px; font-weight: bold; border: none;
   }
-  
+   
   .res-row-group { margin-bottom: 15px; padding: 10px; border-radius: 5px; border: 1px solid #444; }
   .group-color-1 { background: rgba(0, 255, 0, 0.05); border-left: 5px solid #81ff81; } 
   .group-color-2 { background: rgba(255, 0, 0, 0.05); border-left: 5px solid #ff8181; }
@@ -231,6 +231,29 @@
     <button class="close-btn" onclick="document.getElementById('help-modal').style.display='none'">閉じる</button>
   </div>
   <div class="modal-body">
+    
+    <div class="help-section">
+      <div class="help-title" style="color: #ff6b6b;">動画解説</div>
+      <div style="font-size: 12px; color: #ddd; margin-bottom: 8px;">
+        このツールの活用方法をYouTubeで解説しています。
+      </div>
+      <a href="https://youtu.be/xzlsaZXDJHE" target="_blank" style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #cc0000;
+        color: #fff;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        transition: opacity 0.2s;
+      " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+        <span style="margin-right:5px; font-size:16px;">▶</span> YouTubeで解説を見る
+      </a>
+    </div>
     <div class="help-section">
       <div class="help-title">完了マーク（「ここまで厳選した」の目印）</div>
       マスの**右端にある「□」**をクリックすると、緑色のチェックが付きます。抽出にも表示されるので「この武器のこの属性は、ここまで確認済み！」という目印として使ってください。
@@ -254,7 +277,7 @@
         <li><strong>保存について：</strong> 「保存」ボタンを押すと、お使いのブラウザにデータが保存されます。ページを閉じてもデータは消えません。</li>
       </ul>
     </div>
-    
+     
     <div class="help-section" style="border:none; margin-top:20px; padding-top:10px; border-top:1px solid #444;">
       <div class="help-title" style="font-size:12px; color:#aaa;">免責事項・規約</div>
       <p style="font-size:10px; color:#777; line-height:1.4;">
@@ -267,10 +290,9 @@
 
 <script>
   // --- 設定データ ---
-  const ROW_COUNT = 100; //
+  const ROW_COUNT = 100;
   const WEAPONS = ["大剣", "太刀", "片手", "双剣", "ハンマー", "笛", "ランス", "ガンス", "スラアク", "チャアク", "虫棍", "ライト", "ヘビィ", "弓"];
-  // 属性を追加
-  const ATTRIBUTES = ["火", "水", "雷", "氷", "龍", "麻痺", "爆破", "毒", "無属性"];
+  const ATTRIBUTES = ["火", "水", "雷", "氷", "龍"];
 
   const SERIES_SKILLS = [
     "巨戟龍の黙示録", "オメガレゾナンス", "暗黒騎士の証", "黒蝕竜の力", "海竜の渦雷",
@@ -295,7 +317,7 @@
   // --- 初期化処理 ---
   const tableHead = document.getElementById('header-row');
   const tableBody = document.getElementById('table-body');
-  
+   
   WEAPONS.forEach((wp, wIdx) => {
     const thWp = document.createElement('th');
     thWp.className = `col-weapon-label toggle-icon collapsed`;
@@ -314,7 +336,7 @@
   for (let r = 1; r <= ROW_COUNT; r++) {
     const tr = document.createElement('tr');
     tr.id = `row-${r}`;
-    
+     
     const tdNo = document.createElement('td');
     tdNo.className = 'col-no';
     tdNo.innerText = r;
@@ -463,7 +485,7 @@
         for (let a = 0; a < ATTRIBUTES.length; a++) {
           const sVal = document.getElementById(`r${r}_w${w}_a${a}_s`).value;
           const gVal = document.getElementById(`r${r}_w${w}_a${a}_g`).value;
-          
+           
           const cellId = `cell_r${r}_w${w}_a${a}`;
           const isDone = document.getElementById(cellId).classList.contains('cell-done');
 
@@ -495,7 +517,7 @@
         displayedRowCount++;
       }
     }
-    
+     
     const resultDiv = document.getElementById('result-content');
     if(finalHTML === "") {
       resultDiv.innerHTML = "<p>データがありません。</p>";
@@ -516,4 +538,3 @@
 </script>
 </body>
 </html>
-
